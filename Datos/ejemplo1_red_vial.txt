@@ -1,0 +1,36 @@
+# EJEMPLO 1: Red vial entre ciudades del Ecuador
+# Grafo NO dirigido y PONDERADO (peso = distancia aproximada en km)
+NOMBRE=Red vial de Ecuador (km aprox.)
+DIRIGIDO=NO
+PONDERADO=SI
+
+VERTICES
+Quito
+Ibarra
+Latacunga
+Ambato
+Riobamba
+Banos
+Puyo
+Guayaquil
+Cuenca
+Loja
+Santo Domingo
+Esmeraldas
+Manta
+
+ARISTAS
+Quito;Ibarra;115
+Quito;Latacunga;90
+Quito;Santo Domingo;130
+Latacunga;Ambato;45
+Ambato;Riobamba;55
+Ambato;Banos;40
+Banos;Puyo;60
+Riobamba;Guayaquil;230
+Riobamba;Cuenca;210
+Cuenca;Guayaquil;200
+Cuenca;Loja;210
+Santo Domingo;Esmeraldas;190
+Santo Domingo;Guayaquil;280
+Guayaquil;Manta;195

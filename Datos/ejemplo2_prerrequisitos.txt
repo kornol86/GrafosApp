@@ -1,0 +1,34 @@
+# EJEMPLO 2: Prerrequisitos de materias de una carrera de software
+# Grafo DIRIGIDO y NO ponderado (A;B significa "A es prerrequisito de B")
+NOMBRE=Prerrequisitos de materias
+DIRIGIDO=SI
+PONDERADO=NO
+
+VERTICES
+Calculo
+Matematica Discreta
+Programacion I
+Programacion II
+Estructuras de Datos
+Algoritmos
+Bases de Datos
+Arquitectura de Computadores
+Sistemas Operativos
+Redes
+Ingenieria de Software
+Desarrollo Web
+
+ARISTAS
+Calculo;Matematica Discreta
+Programacion I;Programacion II
+Programacion II;Estructuras de Datos
+Matematica Discreta;Algoritmos
+Estructuras de Datos;Algoritmos
+Estructuras de Datos;Bases de Datos
+Arquitectura de Computadores;Sistemas Operativos
+Programacion II;Sistemas Operativos
+Sistemas Operativos;Redes
+Bases de Datos;Ingenieria de Software
+Programacion II;Ingenieria de Software
+Bases de Datos;Desarrollo Web
+Redes;Desarrollo Web
