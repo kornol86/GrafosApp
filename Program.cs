@@ -35,7 +35,7 @@ internal static class Program
             ? "Grafo cargado: (ninguno)"
             : $"Grafo cargado: {_grafo.Nombre} [V={_grafo.NumVertices}, E={_grafo.NumAristas}]");
         Console.WriteLine("------------------------------------------");
-        Console.WriteLine(" 1. Cargar grafo desde archivo .txt");
+        Console.WriteLine(" 1. Cargar grafo desde archivo");
         Console.WriteLine(" 2. Reporte: resumen y grados");
         Console.WriteLine(" 3. Reporte: lista de adyacencia");
         Console.WriteLine(" 4. Reporte: matriz de adyacencia");
@@ -64,7 +64,7 @@ internal static class Program
         }
         if (_grafo == null)
         {
-            Console.WriteLine("Primero cargue un grafo (opción 1).");
+            Console.WriteLine("Primero cargue un grafo.");
             return false;
         }
 
@@ -253,7 +253,7 @@ internal static class Program
 
     // ---------- Utilidades ----------
 
-    /// <summary>Pide un vértice y lo valida contra el grafo (sin distinguir mayúsculas).</summary>
+    /// <summary>Pide un vértice y lo valida contra el grafo.</summary>
     private static string? PedirVertice(string mensaje)
     {
         Console.Write(mensaje);
