@@ -11,9 +11,7 @@ internal static class Program
         while (!salir)
         {
             MostrarMenu();
-            string? entrada = Console.ReadLine();
-            if (entrada == null) return;
-            string opcion = entrada.Trim();
+            string opcion = Console.ReadLine()?.Trim() ?? "";
             try { salir = Ejecutar(opcion); }
             catch (Exception ex) { Console.WriteLine($"Error: {ex.Message}"); }
 
@@ -27,7 +25,7 @@ internal static class Program
 
     private static void MostrarMenu()
     {
-        if (!Console.IsOutputRedirected) Console.Clear();
+        Console.Clear();
         Console.WriteLine("==========================================");
         Console.WriteLine("        GRAFOS - MENÚ PRINCIPAL");
         Console.WriteLine("==========================================");
@@ -35,7 +33,7 @@ internal static class Program
             ? "Grafo cargado: (ninguno)"
             : $"Grafo cargado: {_grafo.Nombre} [V={_grafo.NumVertices}, E={_grafo.NumAristas}]");
         Console.WriteLine("------------------------------------------");
-        Console.WriteLine(" 1. Cargar grafo desde archivo");
+        Console.WriteLine(" 1. Cargar grafo desde archivo .txt");
         Console.WriteLine(" 2. Reporte: resumen y grados");
         Console.WriteLine(" 3. Reporte: lista de adyacencia");
         Console.WriteLine(" 4. Reporte: matriz de adyacencia");
@@ -48,6 +46,7 @@ internal static class Program
         Console.WriteLine("11. Agregar vértice / arista");
         Console.WriteLine("12. Eliminar vértice / arista");
         Console.WriteLine("13. Análisis de tiempos de ejecución");
+        Console.WriteLine("14. Exportar imagen del grafo (SVG)");
         Console.WriteLine(" 0. Salir");
         Console.Write("\nOpción: ");
     }
@@ -57,14 +56,14 @@ internal static class Program
         if (opcion == "0") return true;
         if (opcion == "1") { CargarArchivo(); return false; }
 
-        if (!int.TryParse(opcion, out int n) || n < 2 || n > 13)
+        if (!int.TryParse(opcion, out int n) || n < 2 || n > 14)
         {
             Console.WriteLine("Opción inválida.");
             return false;
         }
         if (_grafo == null)
         {
-            Console.WriteLine("Primero cargue un grafo.");
+            Console.WriteLine("Primero cargue un grafo (opción 1).");
             return false;
         }
 
@@ -82,6 +81,7 @@ internal static class Program
             case 11: Agregar(); break;
             case 12: Eliminar(); break;
             case 13: AnalisisTiempos(); break;
+            case 14: ExportarImagen(); break;
         }
         return false;
     }
@@ -251,9 +251,50 @@ internal static class Program
         Console.WriteLine($"{"Espacio",-28}{"O(V + E)",-18}");
     }
 
+    private static void ExportarImagen()
+    {
+        IReadOnlyList<string>? resaltada = null;
+
+        Console.Write("¿Resaltar en la imagen la ruta más corta entre dos vértices? (s/n): ");
+        if ((Console.ReadLine() ?? "").Trim().ToLowerInvariant() == "s")
+        {
+            string? origen = PedirVertice("Vértice origen: ");
+            if (origen == null) return;
+            string? destino = PedirVertice("Vértice destino: ");
+            if (destino == null) return;
+
+            var resultado = Algoritmos.RutaMasCorta(_grafo!, origen, destino);
+            if (resultado == null)
+                Console.WriteLine($"No existe ruta de {origen} a {destino}; se exporta el grafo sin resaltar.");
+            else
+                resaltada = resultado.Value.Ruta;
+        }
+
+        string carpeta = Path.Combine(AppContext.BaseDirectory, "Salida");
+        Directory.CreateDirectory(carpeta);
+
+        string nombre = NombreSeguro(_grafo!.Nombre) + (resaltada != null ? "_ruta" : "");
+        string archivo = Path.Combine(carpeta, nombre + ".svg");
+        ExportadorImagen.ExportarSvg(_grafo, archivo, resaltada);
+        Console.WriteLine($"\nImagen guardada en:\n  {archivo}");
+
+        Console.Write("¿Abrirla ahora? (s/n): ");
+        if ((Console.ReadLine() ?? "").Trim().ToLowerInvariant() != "s") return;
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(archivo) { UseShellExecute = true }); }
+        catch (Exception ex) { Console.WriteLine($"No se pudo abrir automáticamente ({ex.Message}). Ábrala desde la carpeta indicada."); }
+    }
+
     // ---------- Utilidades ----------
 
-    /// <summary>Pide un vértice y lo valida contra el grafo.</summary>
+    /// <summary>Convierte el nombre del grafo en un nombre de archivo válido.</summary>
+    private static string NombreSeguro(string nombre)
+    {
+        var invalidos = Path.GetInvalidFileNameChars();
+        var limpio = new string(nombre.Select(c => invalidos.Contains(c) || c == ' ' ? '_' : c).ToArray());
+        return limpio.Length == 0 ? "grafo" : limpio;
+    }
+
+    /// <summary>Pide un vértice y lo valida contra el grafo (sin distinguir mayúsculas).</summary>
     private static string? PedirVertice(string mensaje)
     {
         Console.Write(mensaje);
